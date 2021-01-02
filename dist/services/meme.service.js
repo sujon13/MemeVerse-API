@@ -13,7 +13,7 @@ exports.MemeService = void 0;
 const meme_entity_1 = require("../models/meme.entity");
 class MemeService {
     constructor() {
-        this.getMemeId = (id) => {
+        this.getMemeById = (id) => {
             console.log(`${this.constructor.name}-> getMemeId()->id: ${id}`);
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {

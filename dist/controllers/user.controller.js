@@ -109,6 +109,7 @@ class UserController {
             var _a, _b;
             const payload = {
                 user_id: user === null || user === void 0 ? void 0 : user._id,
+                name: user === null || user === void 0 ? void 0 : user.name,
                 email: (_a = user === null || user === void 0 ? void 0 : user.email) === null || _a === void 0 ? void 0 : _a.toString(),
                 isAdmin: (_b = user === null || user === void 0 ? void 0 : user.isAdmin) === null || _b === void 0 ? void 0 : _b.valueOf(),
                 isAccessToken: true

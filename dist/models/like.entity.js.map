@@ -1,0 +1,1 @@
+{"version":3,"file":"like.entity.js","sourceRoot":"","sources":["../../src/models/like.entity.ts"],"names":[],"mappings":";;;AACA,uCAAiE;AAQpD,QAAA,UAAU,GAAW,IAAI,iBAAM,CAAC;IACzC,MAAM,EAAE,MAAM;IACd,MAAM,EAAE,MAAM;IACd,YAAY,EAAE;QACV,IAAI,EAAE,OAAO;QACb,OAAO,EAAE,KAAK;KACjB;CACJ,CAAC,CAAC;AAEU,QAAA,IAAI,GAAiB,gBAAK,CAAQ,OAAO,EAAE,kBAAU,CAAC,CAAC"}

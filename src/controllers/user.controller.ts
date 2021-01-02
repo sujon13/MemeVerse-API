@@ -12,6 +12,7 @@ if (process.env.NODE_ENV == undefined) {
 
 export interface IPayload {
     user_id: Schema.Types.ObjectId,
+    name: String,
     email: string,
     isAdmin: boolean,
     isAccessToken: boolean
@@ -117,6 +118,7 @@ export class UserController {
     private createAccessToken = (user: IUser): string => {
         const payload: IPayload = {
             user_id: user?._id,
+            name: user?.name,
             email: user?.email?.toString(),
             isAdmin: user?.isAdmin?.valueOf(),
             isAccessToken: true

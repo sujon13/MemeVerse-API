@@ -49,7 +49,7 @@ class Server {
     private mongo() {
         mongoose.set('useFindAndModify', false);
         mongoose.connect(
-            `mongodb://localhost/${process.env.DATABASE_NAME}`,
+            `mongodb://localhost/meme`,
             {
                 useNewUrlParser: true,
                 useUnifiedTopology: true

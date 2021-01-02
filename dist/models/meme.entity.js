@@ -3,9 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Meme = exports.MemeSchema = void 0;
 const mongoose_1 = require("mongoose");
 exports.MemeSchema = new mongoose_1.Schema({
-    ownerId: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        required: true
+    owner: {
+        id: mongoose_1.Schema.Types.ObjectId,
+        name: String,
+        email: String
+    },
+    content: {
+        type: String,
+        max: 100
     },
     url: {
         type: String,

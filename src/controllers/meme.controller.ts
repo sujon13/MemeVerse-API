@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import { Document, Schema, Model, model, Error } from 'mongoose';
 import dotenv from 'dotenv';
 
 import { Meme, IMeme } from '../models/meme.entity';
+import { Like, ILike } from '../models/like.entity';
 import { MemeService } from '../services/meme.service';
 import { Validator } from '../validator';
 
@@ -13,7 +13,6 @@ if (process.env.NODE_ENV == undefined) {
 export interface UpdateMemeDTO {
     like: boolean,
     comment: boolean,
-    userId?: Schema.Types.ObjectId,
     content?: string
 }
 
@@ -30,7 +29,7 @@ export class MemeController {
         try {
             const memes = await Meme.find(
                 {},
-                '_id owner url numOfLikes numOfComments sharedAt',
+                '_id owner content url numOfLikes numOfComments sharedAt',
                 {
                     sort: '-sharedAt',
                     skip: (page - 1) * limit,
@@ -52,7 +51,12 @@ export class MemeController {
         }
 
         const meme = new Meme({
-            ownerId: req.payload?.user_id,
+            owner: {
+                id: req.payload?.user_id,
+                name: req.payload?.name,
+                email: req.payload?.email
+            },
+            content: req.body?.content,
             url: req.file.path,
             numOfLikes: 0,
             numOfComments: 0,
@@ -72,21 +76,25 @@ export class MemeController {
     public updateMeme = async (req: Request, res: Response) => {
         const memeId = req.params.id;
         const body: UpdateMemeDTO = req.body;
+        const userId = req.payload?.user_id;
         
-        const meme = await this.memeServive.getMemeId(memeId);
+        const meme = await this.memeServive.getMemeById(memeId);
         if (meme === null) {
             console.log(`${this.constructor.name}->updateMeme()-> could not get meme for id: ${memeId}`);
             return res.sendStatus(404);
         }
-
+        
         if (body.like === true) {
-            meme.numOfLikes = meme.numOfLikes?.valueOf() + 1;
+            const shouldIncrement = await this.updateLikeInfo(memeId, userId?.toString());
+            meme.numOfLikes = shouldIncrement
+                ? meme.numOfLikes?.valueOf() + 1
+                : meme.numOfLikes?.valueOf() - 1;
         }
-        if (body.comment === true && body.userId && body.content) {
+        if (body.comment === true && body.content) {
             meme.numOfComments = meme.numOfComments?.valueOf() + 1;
             meme.comments.push ({
                 content: body.content,
-                userId: body.userId,
+                userId: userId,
                 time: new Date()
             });  
         }
@@ -94,9 +102,63 @@ export class MemeController {
         try {
             const updatedMeme = await meme.save();
             console.log(`${this.constructor.name}->updateMeme()-> updated meme for id ${memeId}: `, updatedMeme);
-            res.status(204);
+            res.sendStatus(204);
         } catch (error) {
             console.log(`${this.constructor.name}->updateMeme()-> update failed for memeId ${memeId}`);
+            res.sendStatus(500);
+        }
+    }
+
+    private updateLikeInfo = async (memeId: string, userId: string) => {
+        console.log(`${this.constructor.name}->updateLikeInfo()-> memeId ${memeId}, userId: ${userId}`);
+        try {
+            const likeInfo = await Like.findOne(
+                {
+                    memeId: memeId,
+                    userId: userId
+                }
+            );
+
+            if (likeInfo) {
+                console.log(`${this.constructor.name}->updateLikeInfo()-> got like info for memeId ${memeId} and is: `, likeInfo);
+                const alreadyLiked = likeInfo.alreadyLiked.valueOf();
+                likeInfo.alreadyLiked = alreadyLiked ? false : true;
+                await likeInfo.save();
+                return !alreadyLiked;
+            } else {
+                const newLikeInfo = new Like({
+                    memeId: memeId,
+                    userId: userId,
+                    alreadyLiked: true
+                });
+                const savedLikeInfo = await newLikeInfo.save();
+                console.log(`${this.constructor.name}->updateLikeInfo()-> newLikeInfo: `, savedLikeInfo);
+                return true;
+            }
+        } catch (error) {
+            console.log(`${this.constructor.name}->userAlreadyLiked()-> error: `, error);
+            return true;
+        }
+    }
+
+    public getUserLikeInfo = async (req: Request, res: Response) => {
+        const userId = req.payload?.user_id?.toString();
+        const memeIdList: any = req.query.memeIdList;
+        console.log(`${this.constructor.name}->getUserLikeInfo()->userId: ${userId}`);
+
+        try {
+            const list = await Like.find(
+                {
+                    memeId: {
+                        $in: memeIdList
+                    },
+                    userId: userId
+                }
+            );
+            console.log(`${this.constructor.name}->getUserLikeInfo()->likeinfo list: `, list);
+            res.status(200).send(list);
+        } catch (error) {
+            console.log(`${this.constructor.name}->getUserLikeInfo()->error: `, error);
             res.sendStatus(500);
         }
     }

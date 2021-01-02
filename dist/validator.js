@@ -78,7 +78,7 @@ Validator.emailValidator = (req, res, next) => __awaiter(void 0, void 0, void 0,
 Validator.pageAndLimitValidation = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _b, _c;
     const page = parseInt(((_b = req.query.page) === null || _b === void 0 ? void 0 : _b.toString()) || '1');
-    const limit = parseInt(((_c = req.query.limit) === null || _c === void 0 ? void 0 : _c.toString()) || '10');
+    const limit = parseInt(((_c = req.query.limit) === null || _c === void 0 ? void 0 : _c.toString()) || '5');
     if (!Number.isInteger(page) || !Number.isInteger(limit)) {
         return res.status(400).send('page or limit is invalid');
     }

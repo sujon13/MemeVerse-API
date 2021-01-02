@@ -16,21 +16,6 @@ if (process.env.NODE_ENV == undefined) {
 }
 class Server {
     constructor() {
-        this.handleError = (err, req, res, next) => {
-            console.error(`statusCode: ${err.statusCode}`);
-            console.error(`message: ${err.message}`);
-            console.error(`stack: ${err.stack}`);
-            // set locals, only providing error in development
-            res.locals.message = err.message;
-            res.locals.error = req.app.get('env') === 'development' ? err : {};
-            // render the error page
-            if (err.statusCode && err.statusCode != 500) {
-                res.status(err.statusCode).send(err.message);
-            }
-            else {
-                res.status(500).send('Internal server error');
-            }
-        };
         this.app = express_1.default();
         this.config();
         this.routes();
@@ -42,15 +27,6 @@ class Server {
         this.app.use('/api/v1/memes', new meme_route_1.MemeRoutes().router);
     }
     config() {
-        /*this.app.use(
-            fileUpload({
-                name: "",
-                data: {},
-                mimetype: "",
-                useTempFiles: true,
-                tempFileDir: "/tmp/",
-            })
-        );*/
         this.app.set('port', process.env.PORT || 3010);
         this.app.use('/src/uploads', express_1.default.static('src/uploads'));
         this.app.use(express_1.default.json({ limit: '25mb' }));
@@ -64,32 +40,10 @@ class Server {
             console.log(`body: `, req.body);
             next();
         });
-        // error handler
-        /*this.app.use( (err: Error, req: Request, res: Response, next: NextFunction) => {
-            console.log('error: ', err);
-            res.sendStatus(500);
-            
-            console.error(`statusCode: ${err.statusCode}`);
-            console.error(`message: ${err.message}`);
-            console.error(`stack: ${err.stack}`);
-            // set locals, only providing error in development
-            res.locals.message = err.message;
-            res.locals.error = req.app.get('env') === 'development' ? err : {};
-    
-            // render the error page
-            if (err.statusCode && err.statusCode != 500) {
-                res.status(err.statusCode).send(err.message);
-            } else {
-                res.status(500).send('Internal server error');
-            }
-        });
-        */
     }
     mongo() {
         mongoose_1.default.set('useFindAndModify', false);
-        mongoose_1.default.connect(
-        //process.env.DB_CONNECTION || '',
-        'mongodb://localhost/meme', {
+        mongoose_1.default.connect(`mongodb://localhost/meme`, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         }, () => {
@@ -97,7 +51,7 @@ class Server {
         });
     }
     start() {
-        this.app.listen(this.app.get("port"), () => {
+        this.app.listen(this.app.get('port'), () => {
             console.log('API is running at http://localhost:%d', this.app.get('port'));
         });
     }

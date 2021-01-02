@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 class AuthController {
     constructor() {
-        this.findAll = (req, res) => {
-            res.status(200).send([]);
+        this.verifyToken = (req, res) => {
+            res.sendStatus(200);
         };
     }
 }

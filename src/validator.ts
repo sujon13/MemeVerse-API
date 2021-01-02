@@ -73,7 +73,7 @@ export class Validator {
 
     public static pageAndLimitValidation = async (req: Request, res: Response, next: NextFunction) => {
         const page = parseInt(req.query.page?.toString() || '1');
-        const limit = parseInt(req.query.limit?.toString() || '10');
+        const limit = parseInt(req.query.limit?.toString() || '5');
 
         if (!Number.isInteger(page) || !Number.isInteger(limit)) {
             return res.status(400).send('page or limit is invalid');

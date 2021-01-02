@@ -23,6 +23,13 @@ export class MemeRoutes {
             this.memeController.getMemes
         );
 
+        this.router.get(`/like`,
+            [
+                JWT.verifyToken
+            ],
+            this.memeController.getUserLikeInfo
+        );
+
         this.router.post(basePath,
             [
                 JWT.verifyToken,
@@ -34,10 +41,18 @@ export class MemeRoutes {
 
         this.router.patch(`/:id`,
             [
-                Validator.mongoDbIdValidation
+                Validator.mongoDbIdValidation,
+                JWT.verifyToken
             ],
             this.memeController.updateMeme
         );
 
+        this.router.get(`/:id/like`,
+            [
+                Validator.mongoDbIdValidation,
+                JWT.verifyToken
+            ],
+            this.memeController.getUserLikeInfo
+        );
     }
 }

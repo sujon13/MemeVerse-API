@@ -47,12 +47,15 @@ JWT.verifyToken = (req, res, next) => __awaiter(void 0, void 0, void 0, function
         var token = authHeader.substring(7, authHeader.length);
     }
     else {
-        return res.status(401).send('Access Denied! Token is invalid');
+        const message = 'Access Denied! Token is invalid';
+        console.log(message);
+        return res.status(401).send(message);
     }
     //verify a token symmetric
     const JWT_SECRET = process.env.TOKEN_SECRET || 'abcde';
     jwt.verify(token, JWT_SECRET, function (err, decoded) {
         if (err) {
+            console.log(err);
             return res.status(401).send(err);
         }
         console.log(`decoded payload: `, decoded);

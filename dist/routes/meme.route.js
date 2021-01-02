@@ -17,14 +17,22 @@ class MemeRoutes {
         this.router.get(basePath, [
             validator_1.Validator.pageAndLimitValidation
         ], this.memeController.getMemes);
+        this.router.get(`/like`, [
+            jwt_1.JWT.verifyToken
+        ], this.memeController.getUserLikeInfo);
         this.router.post(basePath, [
             jwt_1.JWT.verifyToken,
             multer_service_1.upload.single('image'),
             validator_1.Validator.validateIncomingFile
         ], this.memeController.createMeme);
         this.router.patch(`/:id`, [
-            validator_1.Validator.mongoDbIdValidation
+            validator_1.Validator.mongoDbIdValidation,
+            jwt_1.JWT.verifyToken
         ], this.memeController.updateMeme);
+        this.router.get(`/:id/like`, [
+            validator_1.Validator.mongoDbIdValidation,
+            jwt_1.JWT.verifyToken
+        ], this.memeController.getUserLikeInfo);
     }
 }
 exports.MemeRoutes = MemeRoutes;

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { AuthController } from "./../controllers/auth.controller";
+import { JWT } from '../verification/jwt';
 
 export class AuthRoutes {
     router: Router;
@@ -14,9 +15,9 @@ export class AuthRoutes {
         let basePath = "/";
         this.router.get(basePath,
             [
-                //this.authController.authenticateJWT
+                JWT.verifyToken
             ],
-            this.authController.findAll
+            this.authController.verifyToken
         )
     }
 }

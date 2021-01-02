@@ -2,7 +2,12 @@
 import { Document, Schema, Model, model, Error } from 'mongoose';
 
 export interface IMeme extends Document {
-    ownerId: Schema.Types.ObjectId,
+    owner: {
+        id: Schema.Types.ObjectId,
+        name: String,
+        email: String
+    },
+    content: String,
     url: String,
     numOfLikes: Number,
     numOfComments: Number,
@@ -17,9 +22,14 @@ export interface IMeme extends Document {
 }
 
 export const MemeSchema: Schema = new Schema({
-    ownerId: {
-        type: Schema.Types.ObjectId,
-        required: true
+    owner: {
+        id: Schema.Types.ObjectId,
+        name: String,
+        email: String
+    },
+    content: {
+        type: String,
+        max: 100
     },
     url: {
         type: String,
